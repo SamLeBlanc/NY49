@@ -1,0 +1,39 @@
+body { margin: 0; padding: 0; font-family: Helvetica; overflow: hidden}
+#map { position: absolute; top: 0; bottom: 0; width: 100%; z-index:5; overflow: hidden}
+
+#heading{ position: absolute; top: 0; left: 0; z-index:10; margin:10px; font-weight:900; -moz-user-select: -moz-none; -khtml-user-select: none; -webkit-user-select: none; -ms-user-select: none; user-select: none;}
+#title { -webkit-text-stroke: 2px navy; color:#3786e4; font-size:60px; }
+#subtitle{ color:white; margin-left: 5px; margin-top: -5px; }
+
+#move { position: absolute; padding:5px; background-color: white; border-radius: 3px; font-family: monospace; z-index:6;}
+table.tableA { }
+table.tableA td, table.tableA th{ border-bottom: 1px solid blue;}
+
+#legend {
+  padding: 10px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  line-height: 18px;
+  margin-bottom: 40px;
+  z-index:10;
+}
+
+.legend-key {
+  display: inline-block;
+  border-radius: 20%;
+  width: 20px;
+  height: 20px;
+  margin-right: 5px;
+  z-index:10;
+}
+
+.map-overlay {
+  position: absolute;
+  top: 90px;
+  left: 0px;
+  background: rgba(200, 200, 200, 0.8);
+  margin: 10px;
+  font-family: Arial, sans-serif;
+  overflow: auto;
+  border-radius: 3px;
+  z-index:10;
+}
