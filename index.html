@@ -9,8 +9,11 @@
   <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
   <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
   <script src="https://d3js.org/d3.v5.min.js"></script>
-  <script src="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.min.js"></script>
-  <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/plugins/mapbox-gl-geocoder/v4.7.0/mapbox-gl-geocoder.css" type="text/css">
+  <script type="text/javascript" src="scripts/main.js"></script>
+  <script type="text/javascript" src="scripts/Coloring.js"></script>
+  <script type="text/javascript" src="scripts/DataAndFeatureStates.js"></script>
+  <script type="text/javascript" src="scripts/Hovering.js"></script>
+  <script type="text/javascript" src="scripts/SourcesAndLayers.js"></script>
   <link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
@@ -21,209 +24,24 @@
   <div id="subtitle">Updated June 8th, 2021</div>
 </div>
 <div id="move"></div>
-<div class="map-overlay" id="legend"></div>
+<div id="legend"></div>
 
 <script>
 
-var hoveredId = null;
-
 mapboxgl.accessToken = 'pk.eyJ1Ijoic2FtbGVibGFuYyIsImEiOiJja2hneXNrOXUxOWdyMnF0OWgxdWRma3VsIn0.NClhc-lMIVbihpDxZ12YuQ';
-var map = new mapboxgl.Map({
+const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/dark-v10', // style URL
-  center: [-74.129219,40.624246],
-  zoom: 13.039447141875703,
+  center: [-74.129219,40.624246], // Staten Island
+  zoom: 13.04,
   pitch: 0,
-  interactive: true, // true required
+  interactive: true, // !important
 });
-
 
 map.on('load', function () {
-  map.fitBounds([
-    [-74.206638,40.599356], // southwestern corner of the bounds
-    [-74.051800,40.649127] // northeastern corner of the bounds
-    ]);
-  addSource()
-  addFillLayer()
-  addLineLayer()
-  addHighlightLayer()
-  loadDataFromCSV()
-  colorLayer()
-  createLegend()
-  setTimeout(function(){
-    setFeatStates()
-  }, 500);
+  main()
 });
 
-map.on('mousemove', 'd-fills', function (e) {
-  onHoverStart(e)
-  hoveredId = setHoverState(e,hoveredId)
-  //console.log(hoveredId)
-});
-map.on('mouseleave', 'd-fills', function () {
-  onHoverFinish()
-  removeHoverState(hoveredId)
-});
-
-$(document).on('mousemove', function(e){
-  $('#move').css({
-    left:  e.pageX+10,
-    top:   e.pageY+10
-  });
-});
-
-function onHoverStart(e){
-  map.getCanvas().style.cursor = "crosshair";
-  var obj = map.getFeatureState({ source: 'source', sourceLayer: 'NY49-dwhx2o', id: e.features[0].properties.ElectDist });
-  arr = [
-    ['District', e.features[0].properties.ElectDist],
-    ['Total Doors', obj['Total']],
-    ['Knocked', obj['Knocked']],
-    ['Percent', obj['Percent']]
-  ]
-  addMoveTable(arr)
-}
-function onHoverFinish(){
-  if ($("#move-table")){
-    $("#move-table").remove();
-  }
-}
-function setHoverState(e,hoveredId){
-  if (e.features.length > 0) {
-    if (hoveredId) {
-      map.setFeatureState({ source: 'source', id: hoveredId, sourceLayer:'NY49-dwhx2o'}, { hover: false });
-    }
-    hoveredId = e.features[0].id;
-    map.setFeatureState({ source: 'source', id: hoveredId, sourceLayer:'NY49-dwhx2o'}, { hover: true });
-  }
-  return hoveredId
-}
-function removeHoverState(hoveredId){
-  if (hoveredId) {
-    map.setFeatureState({ source: 'source', id: hoveredId, sourceLayer:'NY49-dwhx2o'}, { hover: false });
-  }
-  hoveredId = null;
-}
-function addSource(){
-  map.addSource('source', {
-    'type': 'vector',
-    'url': 'mapbox://samleblanc.6agltvbn',
-    'promoteId': 'ElectDist'
-  })
-}
-function addFillLayer(){
-  map.addLayer({
-    'id': 'd-fills',
-    'type': 'fill',
-    'source': 'source',
-    'source-layer': 'NY49-dwhx2o',
-    'layout': {'visibility': 'visible'},
-    'paint': {
-      'fill-color': 'red',
-      'fill-opacity' : .7,
-    },
-  })
-}
-function addLineLayer(){
-  map.addLayer({
-    'id': 'd-lines',
-    'type': 'line',
-    'source': 'source',
-    'source-layer': 'NY49-dwhx2o',
-    'layout': {'visibility': 'visible'},
-    'paint': {
-        'line-color': 'black',
-        'line-width': 1,
-        'line-opacity': 1,
-      },
-  });
-}
-function addHighlightLayer(){
-  map.addLayer({
-    'id': 'd-highlight',
-    'type': 'line',
-    'source': 'source',
-    'source-layer': 'NY49-dwhx2o',
-    'layout': {'visibility': 'visible'},
-    'paint': {
-      'line-color': 'yellow',
-      'line-width' : [
-        'case',
-        ['boolean', ['feature-state', 'hover'], false], 5, 0,
-      ],
-    },
-  })
-}
-function loadDataFromCSV(){
-  d3.csv(`data/6-8.csv`).then(function(data) {
-    keys = Object.keys(data[0])
-    data.forEach(function(d) {
-      keys.forEach(function(k) {
-        if (k != 'ElectDist') d[k] = +d[k]
-      })
-    });
-    LORAX = data.filter(function(d){ return true })
-  });
-}
-function setFeatStates(){
-  LORAX.forEach(function(d){
-    map.setFeatureState({ source: 'source', sourceLayer: 'NY49-dwhx2o', id: d.ElectDist }, {'Total' : d.Total} );
-    map.setFeatureState({ source: 'source', sourceLayer: 'NY49-dwhx2o', id: d.ElectDist }, {'Knocked' : d.Knocked} );
-    map.setFeatureState({ source: 'source', sourceLayer: 'NY49-dwhx2o', id: d.ElectDist }, {'Percent' : d.Percent} );
-  })
-}
-function addMoveTable(arr) {
-  if ($("#move-table")){
-    $("#move-table").remove();
-  }
-  var widths = ['100px','50px']
-  var myTableDiv = document.getElementById("move")
-  var table = document.createElement('TABLE')
-  var tableBody = document.createElement('TBODY')
-  table.id = 'move-table'
-  table.className = 'tableA'
-  table.appendChild(tableBody);
-
-  for (i = 0; i < arr.length; i++) {
-    var tr = document.createElement('TR');
-    for (j = 0; j < arr[i].length; j++) {
-      var td = document.createElement('TD')
-      td.width=widths[j]
-      td.appendChild(document.createTextNode(arr[i][j]));
-      tr.appendChild(td)
-    }
-    tableBody.appendChild(tr);
-  }
-  myTableDiv.appendChild(table)
-}
-function colorLayer(){
-  map.setPaintProperty('d-fills', 'fill-color', ['case',
-    ['!=', ['feature-state', 'Percent'], null],
-    ['interpolate',
-    ['linear'], ['feature-state', 'Percent'],
-    0,'#FFFFD9',0.25,'#DAF1B3',0.5,'#7FCDBB',0.75,'#2FA4C2',1,'#225EA8'
-  ],
-  'rgba(255, 0, 255, 0)'
-  ]);
-}
-function createLegend(){
-  var layers = ['0%', '25%', '50%', '75%', '100%'];
-  var colors = ['#FFFFD9','#DAF1B3','#7FCDBB','#2FA4C2','#225EA8'];
-  for (i = 0; i < layers.length; i++) {
-    var layer = layers[i];
-    var color = colors[i];
-    var item = document.createElement('div');
-    var key = document.createElement('span');
-    key.className = 'legend-key';
-    key.style.backgroundColor = color;
-
-    var value = document.createElement('span');
-    value.innerHTML = layer;
-    item.appendChild(key);
-    item.appendChild(value);
-    legend.appendChild(item);
-  }
-}
 </script>
 </body>
 </html>
