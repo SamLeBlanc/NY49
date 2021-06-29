@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>NY49</title>
+  <title>NYC49</title>
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css" rel="stylesheet">
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js"></script>
@@ -14,17 +14,23 @@
   <script type="text/javascript" src="scripts/DataAndFeatureStates.js"></script>
   <script type="text/javascript" src="scripts/Hovering.js"></script>
   <script type="text/javascript" src="scripts/SourcesAndLayers.js"></script>
+  <script type="text/javascript" src="scripts/Legend.js"></script>
   <link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
 
 <div id="map"></div>
+<div>
 <div id="heading">
-  <div id="title">NY49</div>
-  <div id="subtitle">Updated June 8th, 2021</div>
+  <div id="title">NYC49</div>
+  <!-- <div id="author">By Sam LeBlanc</div> -->
+  <div id="descrip">Showing the <p1>percentage of homes canvassed</p1> in each of the <i>100</i> electoral districts of <p1>NYC's 49th City Council District</p1>, prior to the <p2>June 22nd, 2021</p2> primary election.</div>
+  <br>
+  <div id="subtitle">Last Update: June 8th, 2021</div>
 </div>
 <div id="move"></div>
 <div id="legend"></div>
+</div>
 
 <script>
 
@@ -32,15 +38,13 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2FtbGVibGFuYyIsImEiOiJja2hneXNrOXUxOWdyMnF0O
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/dark-v10', // style URL
-  center: [-74.129219,40.624246], // Staten Island
+  center: [-74.129,40.624], // Staten Island
   zoom: 13.04,
   pitch: 0,
   interactive: true, // !important
 });
 
-map.on('load', function () {
-  main()
-});
+map.on('load', () => main() );
 
 </script>
 </body>

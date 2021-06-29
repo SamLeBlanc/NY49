@@ -1,11 +1,11 @@
-function addSource(){
+const addSource = () => {
   map.addSource('source', {
     'type': 'vector',
     'url': 'mapbox://samleblanc.6agltvbn',
     'promoteId': 'ElectDist'
   })
 }
-function addFillLayer(){
+const addFillLayer = () => {
   map.addLayer({
     'id': 'd-fills',
     'type': 'fill',
@@ -18,7 +18,7 @@ function addFillLayer(){
     },
   })
 }
-function addLineLayer(){
+const addLineLayer = () => {
   map.addLayer({
     'id': 'd-lines',
     'type': 'line',
@@ -32,7 +32,7 @@ function addLineLayer(){
       },
   });
 }
-function addHighlightLayer(){
+const addHighlightLayer = () => {
   map.addLayer({
     'id': 'd-highlight',
     'type': 'line',
