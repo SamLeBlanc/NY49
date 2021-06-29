@@ -1,5 +1,5 @@
-function main(){
-  map.fitBounds([[-74.206638,40.599356],[-74.051800,40.649127]]);
+const main = () => {
+  setup()
   addSource()
   addFillLayer()
   addLineLayer()
@@ -7,8 +7,17 @@ function main(){
   loadDataFromCSV()
   colorLayer()
   createLegend()
+  startMousefollower()
   hoverSetup()
-  setTimeout(function(){
+  setTimeout(() => {
     setFeatStates()
   }, 500);
+}
+const setup = () => {
+  if (window.innerWidth <  600) {
+    map.fitBounds([[-74.206,40.599],[-74.051,40.749]])
+    $('#legend').css("top", window.innerHeight - 190);
+  } else {
+    map.fitBounds([[-74.206,40.599],[-74.051,40.669]]);
+  }
 }

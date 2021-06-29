@@ -1,6 +1,5 @@
 let hoveredId = null;
-
-function hoverSetup(){
+const hoverSetup = () => {
   map.on('mousemove', 'd-fills', e => {
     onHoverStart(e);
     hoveredId = setHoverState(e, hoveredId);
@@ -10,15 +9,17 @@ function hoverSetup(){
     removeHoverState(hoveredId);
   });
 }
-
-$(document).on('mousemove', function(e){
-  $('#move').css({
-    left:  e.pageX+10,
-    top:   e.pageY+10
+const startMousefollower = () => {
+  $(document).on('mousemove', e => {
+    $('#move').css({ left: e.pageX+10,  top: e.pageY+10 });
   });
-});
-
-function onHoverStart(e){
+}
+const formatPercent = v => `${Math.round(v*1000)/10}%`
+const onHoverFinish = () => {
+  $("#move-table").remove();
+  map.getCanvas().style.cursor = "";
+}
+const onHoverStart = e => {
   let district = e.features[0].properties;
   let feature = map.getFeatureState({ source: 'source', sourceLayer: 'NY49-dwhx2o', id: district.ElectDist });
   let arr = [['District', district.ElectDist],
@@ -26,18 +27,9 @@ function onHoverStart(e){
             ['Knocked', feature['Knocked']],
             ['Percent', formatPercent(feature['Percent'])]];
   addMoveTable(arr)
-}
-
-function formatPercent(value){
-  return (Math.round(value*1000)/10).toString().concat('%')
-}
-
-function onHoverFinish(){
-  $("#move-table").remove();
-}
-
-function setHoverState(e, hoveredId){
   map.getCanvas().style.cursor = "crosshair";
+}
+const setHoverState = e => {
   if (e.features.length > 0) {
     if (hoveredId) {
       map.setFeatureState({ source: 'source', id: hoveredId, sourceLayer:'NY49-dwhx2o'}, { hover: false });
@@ -47,16 +39,13 @@ function setHoverState(e, hoveredId){
   }
   return hoveredId
 }
-
-function removeHoverState(hoveredId){
-  map.getCanvas().style.cursor = "";
+const removeHoverState = () => {
   if (hoveredId) {
     map.setFeatureState({ source: 'source', id: hoveredId, sourceLayer:'NY49-dwhx2o'}, { hover: false });
   }
   hoveredId = null;
 }
-
-function addMoveTable(arr) {
+const addMoveTable = arr => {
   $("#move-table").remove();
   let div = document.getElementById("move")
   let table = document.createElement('TABLE')
@@ -66,8 +55,13 @@ function addMoveTable(arr) {
   table.appendChild(tableBody);
   for (i = 0; i < arr.length; i++) {
     let tr = document.createElement('TR');
+    if (i==0) tr.style.fontWeight = "900";
     for (j = 0; j < arr[i].length; j++) {
       let td = document.createElement('TD')
+      if (i+1==arr.length && j+1==arr[i].length){
+        td.style.fontWeight = "900";
+        td.style.fontSize = "20px";
+      }
       td.width = (90-j*50).toString().concat('px')
       td.appendChild(document.createTextNode(arr[i][j]));
       tr.appendChild(td)
