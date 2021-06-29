@@ -1,6 +1,6 @@
 # [NYC49](https://samleblanc.github.io/NYC49/)
 
-NYC49 is an interactive mapping application used to visualize the percentage of homes canvassed in each of the 100 electoral districts of NYC's 49th City Council District, prior to the June 2021 primary election.  
+NYC49 is an interactive mapping application used to visualize the percentage of homes canvassed in each of the 100 electoral districts of New York City's 49th City Council District, prior to the June 2021 primary election.  
 
 To access the NYC49 project, visit the [GitHub Page](https://samleblanc.github.io/NYC49/).
 
