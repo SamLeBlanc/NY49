@@ -1,22 +1,22 @@
+//// LOAD DATA AND SET FEATURE STATES
+
+// Load county data via D3, and assign to global variable LORAX
 const loadDataFromCSV = () => {
-  d3.csv(`data/6-8.csv`).then(function(data) {
-    data = typeCorrection(data);
+  d3.csv(`data/dat.csv`).then(function(data) {
     LORAX = data;
   });
 }
+
+// Set the feature states for each county in the dataset
+// Feature states allow for easy data use later on, without having to access the full dataset
+// Feature states need to be set for each individual feature (in this case, only 11 counties)
 const setFeatStates = () => {
   LORAX.forEach(d => {
-    map.setFeatureState({ source: 'source', sourceLayer: 'NY49-dwhx2o', id: d.ElectDist }, {'Total' : d.Total} );
-    map.setFeatureState({ source: 'source', sourceLayer: 'NY49-dwhx2o', id: d.ElectDist }, {'Knocked' : d.Knocked} );
-    map.setFeatureState({ source: 'source', sourceLayer: 'NY49-dwhx2o', id: d.ElectDist }, {'Percent' : d.Percent} );
+    map.setFeatureState({ source: 'source', sourceLayer: 'catalist-dqt6kw', id: d.id }, {'name'      : d['name']} );
+    map.setFeatureState({ source: 'source', sourceLayer: 'catalist-dqt6kw', id: d.id }, {'demsupport': parseFloat(d['demsupport'])} );
+    map.setFeatureState({ source: 'source', sourceLayer: 'catalist-dqt6kw', id: d.id }, {'repsupport': parseFloat(d['repsupport'])} );
+    map.setFeatureState({ source: 'source', sourceLayer: 'catalist-dqt6kw', id: d.id }, {'share'     : parseFloat(d['share'])} );
+    map.setFeatureState({ source: 'source', sourceLayer: 'catalist-dqt6kw', id: d.id }, {'undecided' : parseFloat(d['undecided'])} );
+    map.setFeatureState({ source: 'source', sourceLayer: 'catalist-dqt6kw', id: d.id }, {'hispanic'  : parseFloat(d['hispanic'])} );
   });
-}
-const typeCorrection = data => {
-  const keys = Object.keys(data[0]);
-  data.forEach(d => {
-    keys.forEach(k => {
-      d[k] = (k != 'ElectDist' ? +d[k] : d[k])
-    });
-  });
-  return data
 }

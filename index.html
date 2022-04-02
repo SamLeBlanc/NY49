@@ -2,34 +2,95 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>NYC49</title>
+  <title>TX1 - Catalist</title>
   <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+
+  <!-- import dependencies (mapbox,jquery,d3) -->
   <link href="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.css" rel="stylesheet">
   <script src="https://api.mapbox.com/mapbox-gl-js/v2.1.1/mapbox-gl.js"></script>
-  <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
-  <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
   <script src="https://d3js.org/d3.v5.min.js"></script>
+
+  <!-- import javascript files -->
   <script type="text/javascript" src="scripts/main.js"></script>
   <script type="text/javascript" src="scripts/Coloring.js"></script>
   <script type="text/javascript" src="scripts/DataAndFeatureStates.js"></script>
   <script type="text/javascript" src="scripts/Hovering.js"></script>
   <script type="text/javascript" src="scripts/SourcesAndLayers.js"></script>
   <script type="text/javascript" src="scripts/Legend.js"></script>
+
+  <!-- import stylesheet -->
   <link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
 
 <div id="map"></div>
-<div>
 <div id="heading">
-  <div id="title">NYC49</div>
-  <!-- <div id="author">By Sam LeBlanc</div> -->
-  <div id="descrip">Showing the <p1>percentage of homes canvassed</p1> in each of the <i>100</i> electoral districts of <p1>NYC's 49th City Council District</p1>, prior to the <p2>June 22nd, 2021</p2> primary election.</div>
-  <br>
-  <div id="subtitle">Last Update: June 8th, 2021</div>
+  <div id="title">Support in TX1</div>
+  <div id="descrip">Depicting the level of support in several Texas counties in the Coastal Plains region</div>
+  <div id="author">By Sam LeBlanc</div>
+</div>
+<div id="settings">
+  <form class="form-select" id="layer-select">
+      <fieldset>
+        <legend>Select Layers
+          <div class="tooltip">❓
+            <span class="tooltiptext">Select layers to view on the map. If using an opacity mask, multiple layers can be viewed at once.</span>
+          </div>
+        </legend>
+        <div style="color:#ddd">
+          <input type="checkbox" checked id="chk-dem" name="layers" value="dem" onclick="colorMap()">&nbspDemocratic Support<br>
+          <input type="checkbox" id="chk-rep" name="layers" value="rep" onclick="colorMap()">&nbspRepublican Support<br>
+          <input type="checkbox" id="chk-undecided" name="layers" value="undecided" onclick="colorMap()">&nbspUndecided<br>
+          <input type="checkbox" id="chk-hispanic" name="layers" value="hispanic" onclick="colorMap()">&nbspHispanic Percent<br>
+          <input type="checkbox" id="chk-share" name="layers" value="share" onclick="colorMap()">&nbspRegional Vote Share<br>
+        </div>
+      </fieldset>
+  </form>
+  <div style="padding-top: 5px;"></div>
+  <form class="form-select" id="mask-select">
+    <fieldset>
+      <legend>Select Opacity Mask
+        <div class="tooltip">❓
+          <span class="tooltiptext">Opacity masks partially hide tiles with smaller values. Masks can be applied per by variable, or using the Vote Share variable for all layers. </span>
+        </div>
+      </legend>
+      <div style="color:#ddd">
+        <input type="radio" checked id="mask-var" name="mask" value="var" onclick="colorMap()">&nbspMask by Variable<br>
+        <input type="radio" id="mask-share" name="mask" value="share" onclick="colorMap()">&nbspMask by Vote Share<br>
+        <input type="radio" id="mask-none" name="mask" value="none" onclick="colorMap()">&nbspNone<br>
+      </div>
+    </fieldset>
+  </form>
+  <div style="padding-top: 5px;"></div>
+  <form class="form-select" id="tooltip-select">
+    <fieldset>
+      <legend>Select Tooltip Info
+        <div class="tooltip">❓
+          <span class="tooltiptext">Select what values appear when hovering over a county.</span>
+        </div>
+      </legend>
+      <div style="color:#ddd">
+        <input type="checkbox" checked value="name" onclick="colorMap()">&nbspCounty Name<br>
+        <input type="checkbox" checked value="dem" onclick="colorMap()">&nbspDemocratic Support<br>
+        <input type="checkbox" checked value="margin" onclick="colorMap()">&nbspDemocratic Margin<br>
+        <input type="checkbox" checked value="target" onclick="colorMap()">&nbspDemocratic Target Score<br>
+        <span style="font-size:12px; font-weight: 900;">Score = 100*Und*VoteShare*(Dem–Rep)</span><br>
+        <input type="checkbox" value="und" onclick="colorMap()">&nbspUndecided<br>
+        <input type="checkbox" value="rep" onclick="colorMap()">&nbspRepublican Support<br>
+        <input type="checkbox" value="hisp" onclick="colorMap()">&nbspHispanic Percentage<br>
+        <input type="checkbox" value="share" onclick="colorMap()">&nbspRegional Vote Share<br>
+      </div>
+    </fieldset>
+  </form>
 </div>
 <div id="move"></div>
-<div id="legend"></div>
+<div id="legends">
+  <div class="legend" id="legend"></div>
+  <div class="legend" id="legend2"></div>
+  <div class="legend" id="legend3"></div>
+  <div class="legend" id="legend4"></div>
+  <div class="legend" id="legend5"></div>
 </div>
 
 <script>
@@ -38,8 +99,8 @@ mapboxgl.accessToken = 'pk.eyJ1Ijoic2FtbGVibGFuYyIsImEiOiJja2hneXNrOXUxOWdyMnF0O
 const map = new mapboxgl.Map({
   container: 'map',
   style: 'mapbox://styles/mapbox/dark-v10', // style URL
-  center: [-74.129,40.624], // Staten Island
-  zoom: 13.04,
+  center: [-95,32.2], // East Texas
+  zoom: 7.5,
   pitch: 0,
   interactive: true, // !important
 });

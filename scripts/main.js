@@ -5,7 +5,7 @@ const main = () => {
   addLineLayer()
   addHighlightLayer()
   loadDataFromCSV()
-  colorLayer()
+  colorMap()
   createLegend()
   startMousefollower()
   hoverSetup()
@@ -14,10 +14,9 @@ const main = () => {
   }, 500);
 }
 const setup = () => {
-  if (window.innerWidth <  600) {
-    map.fitBounds([[-74.206,40.599],[-74.051,40.749]])
-    $('#legend').css("top", window.innerHeight - 190);
-  } else {
-    map.fitBounds([[-74.206,40.599],[-74.051,40.669]]);
-  }
+  $('#legend').css("left", 530);
+  $('#legend2').css("left", 650);
+  $('#legend4').css("left", 770);
+  $('#legend3').css("left", 890);
+  $('#legend5').css("left", 1010);
 }
